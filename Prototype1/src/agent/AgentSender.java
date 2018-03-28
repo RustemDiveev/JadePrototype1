@@ -18,7 +18,7 @@ public class AgentSender extends Agent{
         //SenderSetupBehaviour agentSenderBehaviour = new SenderSetupBehaviour();
         addBehaviour(new SenderSetupBehaviour(this));
         //this.doDelete();
-        System.out.println("Agent has been initiated!");
+        System.out.println("Agent has been initiated! Hello!");
     }
     
 }

@@ -33,5 +33,5 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
     */
     
     //public boolean done() {return state>10;}
-    public boolean done() {return state<0;}
+    public boolean done() {return state == 10;}
 }
