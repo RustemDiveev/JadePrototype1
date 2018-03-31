@@ -54,7 +54,8 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
                 } 
                 catch (FIPAException fe) {
                     fe.printStackTrace();
-                }                
+                } 
+                block(5000);
         }
     }
     

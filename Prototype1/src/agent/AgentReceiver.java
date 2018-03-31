@@ -17,19 +17,27 @@ import jade.domain.FIPAException;
  */
 public class AgentReceiver extends Agent{
     
+    String serviceType;
+    
     protected void setup() {
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        ServiceDescription sd = new ServiceDescription();
-        sd.setType("courses");
-        sd.setName(getLocalName());
-        dfd.addServices(sd);
         
-        try {
-            DFService.register(this, dfd);
-        }
-        catch (FIPAException fe) {fe.printStackTrace();}
+        Object[] args = getArguments();
+        
+        if (args[0].toString() != null && !args[0].toString().isEmpty()) {
+            this.serviceType = args[0].toString();
             
+            DFAgentDescription dfd = new DFAgentDescription();
+            dfd.setName(getAID());
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType(serviceType);
+            sd.setName(getLocalName());
+            dfd.addServices(sd);
+        
+            try {
+                DFService.register(this, dfd);
+            }
+                catch (FIPAException fe) {fe.printStackTrace();}
+        }    
     }   
     
     
