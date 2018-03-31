@@ -10,14 +10,13 @@ import jade.core.Agent;
 
 /**
  *
- * @author HP
+ * Agent sender class
+ * includes setup and df registration
  */
 public class AgentSender extends Agent{
     
     protected void setup() {
-        //SenderSetupBehaviour agentSenderBehaviour = new SenderSetupBehaviour();
-        addBehaviour(new SenderSetupBehaviour(this));
-        //this.doDelete();
+        addBehaviour(new SenderSetupBehaviour());
         System.out.println("Agent has been initiated! Hello!");
     }
     

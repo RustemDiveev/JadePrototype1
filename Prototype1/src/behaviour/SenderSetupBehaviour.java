@@ -5,33 +5,58 @@
  */
 package behaviour;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
+import jade.lang.acl.MessageTemplate;
 
 /**
  *
- * @author HP
+ * Public class SenderSetupBehaviour.
+ * This behaviour used by AgentSender to request AgentReceivers the target course.
  */
 public class SenderSetupBehaviour extends SimpleBehaviour {
+    // Agent identifier of useful AgentReceiver
+    AID bestAgentReceiver;
+    // Course to search
+    String course = "NOSQL Databases";
+    // State of behaviour
     int state = 0;
-    Agent agent;
-    
-    public SenderSetupBehaviour(Agent agent) {
-        this.agent = agent;
-    }
+    // Counter of replies from receiver agents
+    int repliesCnt = 0;
+    // Message template
+    MessageTemplate mt;
+    // Array of appropriate AgentsReceivers providing required service
+    DFAgentDescription[] receiversArray;
     
     public void action() {
-        System.out.println(state);
-        System.out.println(agent.getLocalName());
-        //System.out.println(agent.getLocalName());
-        state++;
+        switch(state) {
+            case 0:
+                DFAgentDescription dfd = new DFAgentDescription();
+                ServiceDescription sd = new ServiceDescription();
+                sd.setType("courses");
+                dfd.addServices(sd);
+                //
+                try {
+                    //
+                    System.out.println("AgentSender searches for services in DF");
+                    //
+                    DFAgentDescription[] result = DFService.search(myAgent, dfd);
+                    if (result.length > 0) {
+                        this.receiversArray = result;
+                        System.out.println("AgentSender found required service");
+                        state++;
+                    }
+                } 
+                catch (FIPAException fe) {
+                    fe.printStackTrace();
+                }                
+        }
     }
     
-    /*
-    private boolean finished = false;
-    public boolean done() {return finished; }
-    */
-    
-    //public boolean done() {return state>10;}
-    public boolean done() {return state == 10;}
+    public boolean done() {return state == 1;}
 }
