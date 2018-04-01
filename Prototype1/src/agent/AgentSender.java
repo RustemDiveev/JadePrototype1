@@ -20,4 +20,8 @@ public class AgentSender extends Agent{
         //System.out.println("Agent has been initiated! Hello!");
     }
     
+    protected void takeDown() {
+        System.out.println("AgentSender " + this.getLocalName() + " is terminating...");
+    }
+    
 }

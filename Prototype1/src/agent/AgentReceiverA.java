@@ -7,8 +7,10 @@ package agent;
 
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
+import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -30,6 +32,8 @@ public class AgentReceiverA extends Agent{
         services[1] = "System administration";
     }
     
+    private static int doDeleteFlg = 0;
+    
     protected void setup() {
         populateServices();
         //
@@ -39,9 +43,27 @@ public class AgentReceiverA extends Agent{
         sd.setType(serviceType);
         sd.setName(getLocalName());
         dfd.addServices(sd);
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
         //
         System.out.println("AgentReceiverA initialized and registered on df.");
         addBehaviour(new ReceiverSetupBehaviour());
+        if (doDeleteFlg == 1 ) {
+            doDelete();
+        }
+    }
+    
+    protected void takeDown() {
+        try {
+            System.out.println("AgentReceiverA " + getLocalName() + " says goodbye!");
+            DFService.deregister(this);
+        } catch (FIPAException fe ) {
+            fe.printStackTrace();
+        }
+        
     }
     
     private class ReceiverSetupBehaviour extends SimpleBehaviour{
@@ -79,13 +101,17 @@ public class AgentReceiverA extends Agent{
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
                     msg = myAgent.receive(mt);
                     System.out.println(myAgent.getLocalName() + " terminating...");
+                    AgentReceiverA.doDeleteFlg = 1;
                     state++;
+                    myAgent.doDelete();
             }
+            
         
         }
     
         public boolean done() {
-            return state == 2;}
+            return state == 2;
+        }
     
     }
     

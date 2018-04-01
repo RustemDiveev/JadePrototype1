@@ -42,32 +42,37 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
     
     public void action() {
         System.out.println("AgentSender has been initiated!");
-        System.out.println("AgentSender " + myAgent.getLocalName() + " searches for services in DF");
+        System.out.println("Current state is " + state);
         //
         DFAgentDescription dfd = new DFAgentDescription();
         ServiceDescription sd = new ServiceDescription();
         sd.setType("courses");
         dfd.addServices(sd);
         //
-        System.out.println("AgentSender searched DF for " + "courses");
         switch(state) {
             case 0:
-                //System.out.println("AgentSender state = " + state);
-                //
-                try {
-                    //System.out.println("AgentSender " + myAgent.getLocalName() + " searches for services in DF");
-                    DFAgentDescription[] result = DFService.search(myAgent, dfd);
-                    if (result.length > 0) {
-                        receiversArray = result;
-                        System.out.println("AgentSender " + myAgent.getLocalName() + " found required service");
-                        state++;
+                while (state == 0) {
+                    System.out.println("AgentSender " + myAgent.getLocalName() + " searches for services in DF");
+                    try {
+                        DFAgentDescription[] result = DFService.search(myAgent, dfd);
+                        System.out.println("result.length is " + result.length);
+                        if (result.length > 0) {
+                            receiversArray = result;
+                            System.out.println("AgentSender " + myAgent.getLocalName() + " found required service");
+                            state++;
+                        }
+                    } 
+                    catch (FIPAException fe) {
+                        System.out.println("EXCEPTION!");
+                        fe.printStackTrace();
                     }
-                } 
-                catch (FIPAException fe) {
-                    System.out.println("EXCEPTION!");
-                    fe.printStackTrace();
+                    try {
+                        System.out.println("AgentSender " + myAgent.getLocalName() + "sleeps for 10 seconds and continues to search df");
+                        Thread.sleep(10000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-                //state = 0;
             case 1:
                     //System.out.println("AgentSender: Current state is " + state);
                     msg = new ACLMessage(ACLMessage.REQUEST);
@@ -98,5 +103,5 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
         }
     }
     
-    public boolean done() {return state == 1;}
+    public boolean done() {return state == 3;}
 }

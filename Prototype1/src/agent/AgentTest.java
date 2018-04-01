@@ -30,7 +30,6 @@ public class AgentTest extends Agent{
         sd.setType(serviceType);
         sd.setName(getLocalName());
         dfd.addServices(sd);
-        /***/
         try {
             DFService.register(this, dfd);
             System.out.println("Test agent registers on df!");
@@ -38,14 +37,12 @@ public class AgentTest extends Agent{
             fe.printStackTrace();
         }
         try {
-            System.out.println("Sleep for 1 second");
+            System.out.println("Sleep for 5 seconds");
             Thread.sleep(5000);
             System.out.println("Stop sleeping!");
         } catch (InterruptedException ex) {
             Logger.getLogger(AgentTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //takeDown();
-        //kill();
         doDelete();
     }
     
