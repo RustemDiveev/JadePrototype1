@@ -24,7 +24,7 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
     // Agent identifier of useful AgentReceiver
     AID bestAgentReceiver;
     // Course to search
-    String course = "Databases";
+    String course = "Parallel programming";
     // State of behaviour
     int state = 0;
     // Counter of replies from receiver agents
@@ -60,18 +60,20 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
                             receiversArray = result;
                             System.out.println("AgentSender " + myAgent.getLocalName() + " found required service");
                             state++;
+                        } else {
+                            try {
+                                System.out.println("AgentSender " + myAgent.getLocalName() + "sleeps for 10 seconds and continues to search df");
+                                Thread.sleep(10000);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     } 
                     catch (FIPAException fe) {
                         System.out.println("EXCEPTION!");
                         fe.printStackTrace();
                     }
-                    try {
-                        System.out.println("AgentSender " + myAgent.getLocalName() + "sleeps for 10 seconds and continues to search df");
-                        Thread.sleep(10000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    
                 }
             case 1:
                     //System.out.println("AgentSender: Current state is " + state);
@@ -98,6 +100,7 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
                        myAgent.send(msg);
                        System.out.println("Best propose made by " + receiverAID + " with a course of " + msgContent);
                        state++;
+                       myAgent.doDelete();
                    }
                }
         }

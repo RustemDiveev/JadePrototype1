@@ -28,11 +28,11 @@ public class AgentReceiverA extends Agent{
     private static String[] services = new String[2];
     
     private void populateServices() {
-        services[0] = "Databases";
-        services[1] = "System administration";
+        services[1] = "Databases";
+        services[0] = "System administration";
     }
     
-    private static int doDeleteFlg = 0;
+    //private static int doDeleteFlg = 0;
     
     protected void setup() {
         populateServices();
@@ -49,11 +49,13 @@ public class AgentReceiverA extends Agent{
             fe.printStackTrace();
         }
         //
-        System.out.println("AgentReceiverA initialized and registered on df.");
+        System.out.println("AgentReceiverA " + getLocalName() + " initialized and registered on df.");
         addBehaviour(new ReceiverSetupBehaviour());
+        /*
         if (doDeleteFlg == 1 ) {
             doDelete();
         }
+        */
     }
     
     protected void takeDown() {
@@ -75,7 +77,7 @@ public class AgentReceiverA extends Agent{
         ACLMessage msg;
     
         public void action() {
-            System.out.println("AgentReceiverA waits for ACL Message");
+            System.out.println("AgentReceiverA " + getLocalName() + " waits for ACL Message");
             switch (state) {
                 case 0: 
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
@@ -84,7 +86,7 @@ public class AgentReceiverA extends Agent{
                         msg = myAgent.receive(mt);
                         //
                         if (msg != null) {
-                            System.out.println("AgentReceiverA received an ACL Message");
+                            System.out.println("AgentReceiverA " + getLocalName() + " received an ACL Message");
                             msgContent = msg.getContent();
                             senderAgentAID = msg.getSender();
                             for (String service : AgentReceiverA.services) {
@@ -100,8 +102,10 @@ public class AgentReceiverA extends Agent{
                 case 1:
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
                     msg = myAgent.receive(mt);
+                    /*
                     System.out.println(myAgent.getLocalName() + " terminating...");
                     AgentReceiverA.doDeleteFlg = 1;
+                    */
                     state++;
                     myAgent.doDelete();
             }

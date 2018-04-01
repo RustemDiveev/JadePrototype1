@@ -18,14 +18,16 @@ import jade.lang.acl.MessageTemplate;
  *
  * AgentReceiverB
  *      universities
+ *      	Russian Economical University
+ *          High School of Economics
  */
 public class AgentReceiverB extends Agent{
     
     String serviceType = "universities";
     
-    static String[] services = new String[2];
+    private static String[] services = new String[2];
     
-    void populateServices() {
+    private void populateServices() {
         services[0] = "Russian Economical University";
         services[1] = "High School of Economics";
     }
@@ -45,7 +47,19 @@ public class AgentReceiverB extends Agent{
         } catch (FIPAException fe) {
             fe.printStackTrace();
         }
+		//
+        System.out.println("AgentReceiverB " + getLocalName() + " initialized and registered on df.");
+        addBehaviour(new ReceiverSetupBehaviour());
         
+    }
+    
+    protected void takeDown() {
+        try {
+            System.out.println("AgentReceiverB " + getLocalName() + " says goodbye!");
+            DFService.deregister(this);
+        } catch (FIPAException fe ) {
+            fe.printStackTrace();
+        }
     }
     
     private class ReceiverSetupBehaviour extends SimpleBehaviour{
@@ -54,33 +68,38 @@ public class AgentReceiverB extends Agent{
         int state = 0;
         String msgContent;
         jade.core.AID senderAgentAID;
+        ACLMessage msg;
     
         public void action() {
+            System.out.println("AgentReceiverB " + getLocalName() + " waits for ACL Message");
             switch (state) {
                 case 0: 
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
-                    ACLMessage msg = myAgent.receive(mt);
-                    //
-                    if (msg != null) {
-                        msgContent = msg.getContent();
-                        senderAgentAID = msg.getSender();
-                        for (String service : AgentReceiverB.services) {
-                            msg = new ACLMessage(ACLMessage.INFORM);
-                            msg.addReceiver(senderAgentAID);
-                            msg.setContent(service);
-                            send(msg);
+                    while (state == 0) {
+                        msg = myAgent.receive(mt);
+			//
+			if (msg != null) {
+                            System.out.println("AgentReceiverB " + getLocalName() + " received an ACL Message");
+                            msgContent = msg.getContent();
+                            senderAgentAID = msg.getSender();
+                            for (String service : AgentReceiverB.services) {
+                                msg = new ACLMessage(ACLMessage.INFORM);
+				msg.addReceiver(senderAgentAID);
+				msg.setContent(service);
+				send(msg);
+                                state++;
+                            }
                         }
                     }
-                    state++;
                 //
                 case 1:
+                    //System.out.println("Current state is " + state);
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
                     msg = myAgent.receive(mt);
-                    System.out.println(myAgent.getLocalName() + " terminating...");
                     state++;
+                    myAgent.doDelete();
+                }
             }
-        
-        }
     
         public boolean done() {return state == 2;}
     
