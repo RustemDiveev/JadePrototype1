@@ -84,7 +84,8 @@ public class AgentReceiverA extends Agent{
         
         }
     
-        public boolean done() {return state == 2;}
+        public boolean done() {
+            return state == 2;}
     
     }
     
