@@ -12,6 +12,7 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 /**
@@ -23,7 +24,7 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
     // Agent identifier of useful AgentReceiver
     AID bestAgentReceiver;
     // Course to search
-    String course = "NOSQL Databases";
+    String course = "Databases";
     // State of behaviour
     int state = 0;
     // Counter of replies from receiver agents
@@ -31,31 +32,69 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
     // Message template
     MessageTemplate mt;
     // Array of appropriate AgentsReceivers providing required service
-    DFAgentDescription[] receiversArray;
+    DFAgentDescription[] receiversArray = null;
+    //
+    String msgContent;
+    //
+    jade.core.AID receiverAID;
+    //
+    ACLMessage msg;
     
     public void action() {
+        System.out.println("AgentSender has been initiated!");
+        System.out.println("AgentSender " + myAgent.getLocalName() + " searches for services in DF");
+        //
+        DFAgentDescription dfd = new DFAgentDescription();
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("courses");
+        dfd.addServices(sd);
+        //
+        System.out.println("AgentSender searched DF for " + "courses");
         switch(state) {
             case 0:
-                DFAgentDescription dfd = new DFAgentDescription();
-                ServiceDescription sd = new ServiceDescription();
-                sd.setType("courses");
-                dfd.addServices(sd);
+                //System.out.println("AgentSender state = " + state);
                 //
                 try {
-                    //
-                    System.out.println("AgentSender searches for services in DF");
-                    //
+                    //System.out.println("AgentSender " + myAgent.getLocalName() + " searches for services in DF");
                     DFAgentDescription[] result = DFService.search(myAgent, dfd);
                     if (result.length > 0) {
-                        this.receiversArray = result;
-                        System.out.println("AgentSender found required service");
+                        receiversArray = result;
+                        System.out.println("AgentSender " + myAgent.getLocalName() + " found required service");
                         state++;
                     }
                 } 
                 catch (FIPAException fe) {
+                    System.out.println("EXCEPTION!");
                     fe.printStackTrace();
-                } 
-                //block(5000);
+                }
+                //state = 0;
+            case 1:
+                    //System.out.println("AgentSender: Current state is " + state);
+                    msg = new ACLMessage(ACLMessage.REQUEST);
+                    if (receiversArray != null) {
+                        for (int i = 0; i < receiversArray.length; i++) {
+                            msg.addReceiver(receiversArray[i].getName());
+                        }
+                        msg.setContent(course);
+                        myAgent.send(msg);
+                        System.out.println("AgentSender " + myAgent.getLocalName() + " sends an ACLMessage");
+                        state++;
+                        }
+            case 2:
+               mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+               msg = myAgent.receive(mt);
+               //
+               if (msg != null) {
+                   msgContent = msg.getContent();
+                   receiverAID = msg.getSender();
+                   if (msgContent.equals(course)) {
+                       msg = new ACLMessage(ACLMessage.INFORM);
+                       msg.addReceiver(receiverAID);
+                       myAgent.send(msg);
+                       System.out.println("Best propose made by " + receiverAID + " with a course of " + msgContent);
+                       state++;
+                   }
+               }
         }
     }
     
