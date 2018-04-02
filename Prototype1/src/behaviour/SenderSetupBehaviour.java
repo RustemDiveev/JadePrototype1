@@ -98,7 +98,7 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
                        msg = new ACLMessage(ACLMessage.INFORM);
                        msg.addReceiver(receiverAID);
                        myAgent.send(msg);
-                       System.out.println("Best propose made by " + receiverAID + " with a course of " + msgContent);
+                       System.out.println("Best propose made by " + receiverAID + "\n" + " with a course of " + msgContent);
                        state++;
                        myAgent.doDelete();
                    }

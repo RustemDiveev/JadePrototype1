@@ -17,9 +17,9 @@ import jade.lang.acl.MessageTemplate;
 /**
  *
  * AgentReceiverC
- * 		courses
+ * 	courses
  *      	Parallel programming
- *          Hardware
+ *              Hardware
  */
 public class AgentReceiverC extends Agent{
         
