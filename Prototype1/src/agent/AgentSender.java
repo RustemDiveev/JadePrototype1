@@ -7,6 +7,7 @@ package agent;
 
 import behaviour.SenderSetupBehaviour;
 import jade.core.Agent;
+import java.sql.Timestamp;
 
 /**
  *
@@ -21,7 +22,7 @@ public class AgentSender extends Agent{
     }
     
     protected void takeDown() {
-        System.out.println("AgentSender " + this.getLocalName() + " is terminating...");
+        System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + this.getLocalName() + " is terminating...");
     }
     
 }

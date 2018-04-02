@@ -14,6 +14,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import java.sql.Timestamp;
 
 /**
  *
@@ -41,8 +42,7 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
     ACLMessage msg;
     
     public void action() {
-        System.out.println("AgentSender has been initiated!");
-        System.out.println("Current state is " + state);
+        //System.out.println("Current state is " + state);
         //
         DFAgentDescription dfd = new DFAgentDescription();
         ServiceDescription sd = new ServiceDescription();
@@ -52,17 +52,23 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
         switch(state) {
             case 0:
                 while (state == 0) {
-                    System.out.println("AgentSender " + myAgent.getLocalName() + " searches for services in DF");
+                    System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + myAgent.getLocalName() + " has been initiated!");
+                    System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + myAgent.getLocalName() + " searches for services in DF");
                     try {
                         DFAgentDescription[] result = DFService.search(myAgent, dfd);
-                        System.out.println("result.length is " + result.length);
+                        //System.out.println("result.length is " + result.length);
                         if (result.length > 0) {
                             receiversArray = result;
-                            System.out.println("AgentSender " + myAgent.getLocalName() + " found required service");
+                            System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + myAgent.getLocalName() + " found required service");
+                            for (int i = 0; i < result.length; i++) {
+                                int j = i + 1;
+                                String AIDstr = result[0].getName().toString();
+                                System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + myAgent.getLocalName() + " found services: " + j + " " + AIDstr);
+                            }
                             state++;
                         } else {
                             try {
-                                System.out.println("AgentSender " + myAgent.getLocalName() + "sleeps for 10 seconds and continues to search df");
+                                System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + myAgent.getLocalName() + "sleeps for 10 seconds and continues to search df");
                                 Thread.sleep(10000);
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -70,7 +76,7 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
                         }
                     } 
                     catch (FIPAException fe) {
-                        System.out.println("EXCEPTION!");
+                        System.out.println(new Timestamp(System.currentTimeMillis()) + ": EXCEPTION!");
                         fe.printStackTrace();
                     }
                     
@@ -79,12 +85,14 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
                     //System.out.println("AgentSender: Current state is " + state);
                     msg = new ACLMessage(ACLMessage.REQUEST);
                     if (receiversArray != null) {
+                        String AIDReceivers = "";
                         for (int i = 0; i < receiversArray.length; i++) {
                             msg.addReceiver(receiversArray[i].getName());
+                            AIDReceivers = AIDReceivers + receiversArray[i].getName().toString() + " ";
                         }
                         msg.setContent(course);
                         myAgent.send(msg);
-                        System.out.println("AgentSender " + myAgent.getLocalName() + " sends an ACLMessage");
+                        System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + myAgent.getLocalName() + " sends an ACLMessage.REQUEST to " + "\n" + AIDReceivers);
                         state++;
                         }
             case 2:
@@ -94,13 +102,17 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
                if (msg != null) {
                    msgContent = msg.getContent();
                    receiverAID = msg.getSender();
+                   System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + myAgent.getLocalName() + " receives an ACLMessage from " + "\n" + 
+                                      receiverAID.toString() + " with content of " + msgContent);
                    if (msgContent.equals(course)) {
                        msg = new ACLMessage(ACLMessage.INFORM);
                        msg.addReceiver(receiverAID);
+                       msg.setContent("Terminate!");
                        myAgent.send(msg);
-                       System.out.println("Best propose made by " + receiverAID + "\n" + " with a course of " + msgContent);
+                       System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + myAgent.getLocalName() + " sent an ACLMessage.INFORM to " + receiverAID);
+                       System.out.println(new Timestamp(System.currentTimeMillis()) + ": Best propose made by " + receiverAID + "\n" + " with a course of " + msgContent);
                        state++;
-                       myAgent.doDelete();
+                       //myAgent.doDelete();
                    }
                }
         }
