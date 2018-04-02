@@ -79,18 +79,16 @@ public class AgentReceiverA extends Agent{
                 case 0: 
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
                     while (state == 0) {
-                        //System.out.println("AgentReceiverA waits for ACL Message");
                         msg = myAgent.receive(mt);
-                        //
                         if (msg != null) {
                             msgContent = msg.getContent();
-                            System.out.println("AgentReceiverA msgContent is " + msgContent);
+                            //System.out.println("AgentReceiverA msgContent is " + msgContent);
                             senderAgentAID = msg.getSender();
-                            System.out.println("AgentReceiverA senderAgentAID is " + senderAgentAID.toString());
-                            if (msgContent != null && senderAgentAID != null) {
-                                System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverA " + getLocalName() + " received an ACLMessage.REQUEST from " + "\n" +
+                            //System.out.println("AgentReceiverA senderAgentAID is " + senderAgentAID.toString());
+                            //if (msgContent != null && senderAgentAID != null) {
+                            System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverA " + getLocalName() + " received an ACLMessage.REQUEST from " + "\n" +
                                                senderAgentAID.toString() + " with content of " + msgContent);
-                            }
+                            //}
                             for (String service : AgentReceiverA.services) {
                                 msg = new ACLMessage(ACLMessage.INFORM);
                                 msg.addReceiver(senderAgentAID);
@@ -108,20 +106,24 @@ public class AgentReceiverA extends Agent{
                     msg = myAgent.blockingReceive(mt);
                     //msg = myAgent.receive(mt);
                     msgContent = msg.getContent();
+                    /*
                     if (msgContent == null) {
                         System.out.println("msgContent is null");
                     } else {
                         System.out.println("msgContent is " + msgContent);
                     }
+                    */
                     senderAgentAID = msg.getSender();
-                    if (msgContent == null || senderAgentAID == null) {
-                        System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverA " + getLocalName() + " received an ACLMessage.INFORM from " + "\n" +
+                    //if (msgContent == null || senderAgentAID == null) {
+                    System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverA " + getLocalName() + " received an ACLMessage.INFORM from " + "\n" +
                                         msg.getSender().toString() + " with content of " + msg.getContent());
+                    /*
                     } else {
                         System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverA " + getLocalName() + " received an ACLMessage.INFORM and terminating");
                     }
+                    */
                     state++;
-                    //myAgent.doDelete();
+                    myAgent.doDelete();
             }
             
         

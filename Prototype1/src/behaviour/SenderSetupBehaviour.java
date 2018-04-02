@@ -97,7 +97,7 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
                         }
             case 2:
                mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-               msg = myAgent.receive(mt);
+               msg = myAgent.blockingReceive(mt);
                //
                if (msg != null) {
                    msgContent = msg.getContent();
@@ -112,7 +112,7 @@ public class SenderSetupBehaviour extends SimpleBehaviour {
                        System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentSender " + myAgent.getLocalName() + " sent an ACLMessage.INFORM to " + receiverAID);
                        System.out.println(new Timestamp(System.currentTimeMillis()) + ": Best propose made by " + receiverAID + "\n" + " with a course of " + msgContent);
                        state++;
-                       //myAgent.doDelete();
+                       myAgent.doDelete();
                    }
                }
         }

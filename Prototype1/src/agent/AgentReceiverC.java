@@ -77,12 +77,12 @@ public class AgentReceiverC extends Agent{
                 case 0: 
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 		    while (state == 0) {
-			msg = myAgent.receive(mt);
+			msg = myAgent.blockingReceive(mt);
                         //
 			if (msg != null) {
                             msgContent = msg.getContent();
                             senderAgentAID = msg.getSender();
-							System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverC " + getLocalName() + " received an ACLMessage.REQUEST from " + "\n" +
+                            System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverC " + getLocalName() + " received an ACLMessage.REQUEST from " + "\n" +
                                                senderAgentAID.toString() + " with content of " + msgContent);
                             for (String service : AgentReceiverC.services) {
 				msg = new ACLMessage(ACLMessage.INFORM);
@@ -99,7 +99,7 @@ public class AgentReceiverC extends Agent{
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
                     //msg = myAgent.receive(mt);
                     msg = myAgent.blockingReceive(mt);
-					System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverC " + getLocalName() + " received an ACLMessage.INFORM from " + "\n" +
+                    System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverC " + getLocalName() + " received an ACLMessage.INFORM from " + "\n" +
                                         msg.getSender().toString() + " with content of " + msg.getContent());
                     state++;
                     myAgent.doDelete();

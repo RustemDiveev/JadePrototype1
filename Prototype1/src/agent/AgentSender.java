@@ -18,7 +18,6 @@ public class AgentSender extends Agent{
     
     protected void setup() {
         addBehaviour(new SenderSetupBehaviour());
-        //System.out.println("Agent has been initiated! Hello!");
     }
     
     protected void takeDown() {

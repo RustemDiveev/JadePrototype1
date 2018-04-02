@@ -78,7 +78,7 @@ public class AgentReceiverB extends Agent{
                 case 0: 
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
                     while (state == 0) {
-                        msg = myAgent.receive(mt);
+                        msg = myAgent.blockingReceive(mt);
 			//
 			if (msg != null) {
                             System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverB " + getLocalName() + " received an ACLMessage.REQUEST from " + "\n" +
@@ -94,14 +94,14 @@ public class AgentReceiverB extends Agent{
                                                    senderAgentAID.toString() + " with content of " + service);
                                 
                             }
-						state++;
+			state++;
                         }
                     }
                 //
                 case 1:
                     //System.out.println("Current state is " + state);
                     this.mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-                    msg = myAgent.receive(mt);
+                    msg = myAgent.blockingReceive(mt);
 					System.out.println(new Timestamp(System.currentTimeMillis()) + ": AgentReceiverB " + getLocalName() + " received an ACLMessage.INFORM from " + "\n" +
                                         msg.getSender().toString() + " with content of " + msg.getContent());
                     state++;
